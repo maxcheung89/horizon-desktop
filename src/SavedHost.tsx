@@ -1,0 +1,6 @@
+import {useState} from 'react';
+import {Profile} from './types';
+export function SavedHost({profile,busy,connect,edit,rename}:{profile:Profile;busy:boolean;connect:()=>void;edit:()=>void;rename:(name:string)=>Promise<boolean>}){
+ const [renaming,setRenaming]=useState(false),[name,setName]=useState(profile.name);
+ return <div className="saved-host-row">{renaming?<form className="host-rename" onSubmit={async e=>{e.preventDefault();if(await rename(name.trim()))setRenaming(false);}}><label>DISPLAY NAME<input aria-label={`Rename ${profile.name}`} autoFocus required maxLength={64} value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>{if(e.key==='Escape')setRenaming(false);}}/></label><div><button disabled={busy||!name.trim()} type="submit">SAVE NAME</button><button type="button" disabled={busy} onClick={()=>setRenaming(false)}>CANCEL</button></div></form>:<><button className="host-connect" disabled={busy} onClick={connect}><strong>{profile.name}</strong><small>{profile.username}@{profile.host}:{profile.port}</small></button><div className="host-actions"><button disabled={busy} onClick={()=>{setName(profile.name);setRenaming(true);}}>RENAME</button><button disabled={busy} onClick={edit}>EDIT CONNECTION</button></div></>}</div>;
+}
